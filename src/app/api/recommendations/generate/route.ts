@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       // マキシムが担当したチェック項目の完了時間を分析
       const { data: maximeCompletedItems } = await supabase
         .from('checklist_items')
-        .select('id, text_ja, task_id, done_at, due_at, tasks(title_ja)')
+        .select('id, text_ja, task_id, done_at, due_at, tasks!inner(title_ja)')
         .eq('assignee_user_id', maximeUser.id)
         .eq('is_done', true)
         .not('done_at', 'is', null)
@@ -120,9 +120,14 @@ export async function POST(request: NextRequest) {
               .reduce((a, b) => a + b, 0) / otherItems.length
 
             if (maximeDelay < otherAvgDelay - 2) { // 2時間以上早い
+              // tasksは配列として返される可能性があるため、最初の要素を取得
+              const taskTitle = Array.isArray(item.tasks) 
+                ? (item.tasks[0]?.title_ja || '')
+                : (item.tasks as any)?.title_ja || ''
+              
               maximeEfficiencyRecommendations.push({
                 text: item.text_ja,
-                taskTitle: item.tasks?.title_ja || '',
+                taskTitle,
               })
             }
           }
