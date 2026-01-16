@@ -33,7 +33,7 @@ export interface Task {
   week_id: string
   title_ja: string
   title_fr: string | null
-  body_ja: string
+  body_ja: string | null
   body_fr: string | null
   due_at: string
   priority: Priority
