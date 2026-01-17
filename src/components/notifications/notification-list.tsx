@@ -45,12 +45,18 @@ export function NotificationList({ notifications, onClose, onMarkAsRead }: Notif
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-end p-4 pointer-events-none sm:p-6">
-      <div className="pointer-events-auto w-full max-w-md">
+    <>
+      {/* Overlay */}
+      <div 
+        className="fixed inset-0 z-40 bg-black/20" 
+        onClick={onClose}
+      />
+      {/* Notification List */}
+      <div className="fixed top-16 right-4 z-50 w-full max-w-md pointer-events-auto sm:top-20 sm:right-6">
         <Card className="shadow-lg border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-lg">通知</CardTitle>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 touch-manipulation">
               <X className="h-4 w-4" />
             </Button>
           </CardHeader>
@@ -105,6 +111,6 @@ export function NotificationList({ notifications, onClose, onMarkAsRead }: Notif
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   )
 }

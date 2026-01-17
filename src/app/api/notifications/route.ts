@@ -24,7 +24,9 @@ export async function GET(request: NextRequest) {
       .limit(50)
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      // テーブルが存在しない場合やエラーの場合は空の配列を返す
+      console.error('Error fetching event logs:', error)
+      return NextResponse.json({ notifications: [] })
     }
 
     // Transform events into notifications

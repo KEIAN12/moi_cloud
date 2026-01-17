@@ -48,9 +48,16 @@ export function NotificationBell() {
           const data = await res.json()
           setNotifications(data.notifications || [])
           setUnreadCount(data.notifications?.filter((n: Notification) => !n.read).length || 0)
+        } else {
+          // APIエラーの場合は空の配列を設定
+          setNotifications([])
+          setUnreadCount(0)
         }
       } catch (error) {
         console.error("Error loading notifications:", error)
+        // エラー時も空の配列を設定
+        setNotifications([])
+        setUnreadCount(0)
       }
     }
 
@@ -81,7 +88,7 @@ export function NotificationBell() {
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative h-10 w-10"
+        className="relative h-11 w-11 sm:h-10 sm:w-10 touch-manipulation"
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
