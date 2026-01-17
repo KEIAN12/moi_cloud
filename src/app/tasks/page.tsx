@@ -95,6 +95,33 @@ export default function TasksPage() {
         }
     }
 
+    // Get assignee color class based on user role
+    const getAssigneeColorClass = (assigneeId: string | null) => {
+        if (!assigneeId) {
+            return "border-l-4 border-l-gray-300"
+        }
+        
+        const assignee = users.find(u => u.id === assigneeId)
+        if (!assignee) {
+            return "border-l-4 border-l-gray-300"
+        }
+
+        // Kaori (admin) - ローズ系
+        if (assignee.role === "admin" || assignee.name.toLowerCase().includes("kaori")) {
+            return "border-l-4 border-l-rose-500"
+        }
+        // Maxime (worker) - エメラルド系
+        if (assignee.role === "worker" || assignee.name.toLowerCase().includes("maxime")) {
+            return "border-l-4 border-l-emerald-500"
+        }
+        // Mai (coadmin) - スカイ系
+        if (assignee.role === "coadmin" || assignee.name.toLowerCase().includes("mai")) {
+            return "border-l-4 border-l-sky-500"
+        }
+
+        return "border-l-4 border-l-gray-300"
+    }
+
     return (
         <DashboardLayout>
             <div className="space-y-6 sm:space-y-8">
@@ -132,7 +159,7 @@ export default function TasksPage() {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ duration: 0.15, delay: index * 0.05 }}
-                                        className="rounded-lg border p-4 sm:p-5 shadow-sm hover:bg-muted/50 active:bg-muted/70 transition-colors"
+                                        className={`rounded-lg border p-4 sm:p-5 shadow-sm hover:bg-muted/50 active:bg-muted/70 transition-colors ${getAssigneeColorClass(task.assignee_user_id)}`}
                                         onClick={() => router.push(`/tasks/${task.id}`)}
                                     >
                                         {/* タイトル行 */}
@@ -157,7 +184,11 @@ export default function TasksPage() {
                                             </Button>
                                         </div>
                                         {/* 期限とプルダウン行 */}
-                                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                                        <div 
+                                            className="flex items-center justify-between gap-2 flex-wrap"
+                                            onClick={(e) => e.stopPropagation()}
+                                            onTouchStart={(e) => e.stopPropagation()}
+                                        >
                                             <span className="text-sm sm:text-base text-muted-foreground text-pretty">
                                                 期限: <span className="tabular-nums">{new Date(task.due_at).toLocaleDateString("ja-JP", { year: "numeric", month: "numeric", day: "numeric" })}</span>
                                             </span>
@@ -169,7 +200,9 @@ export default function TasksPage() {
                                                         handleAssigneeChange(task.id, e.target.value)
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[110px] sm:min-w-[120px] touch-manipulation"
+                                                    onTouchStart={(e) => e.stopPropagation()}
+                                                    onMouseDown={(e) => e.stopPropagation()}
+                                                    className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[110px] sm:min-w-[120px] touch-manipulation relative z-10"
                                                 >
                                                     <option value="">未割当</option>
                                                     {users.map((user) => (
@@ -185,7 +218,9 @@ export default function TasksPage() {
                                                         handleStatusChange(task.id, e.target.value as TaskStatus)
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation"
+                                                    onTouchStart={(e) => e.stopPropagation()}
+                                                    onMouseDown={(e) => e.stopPropagation()}
+                                                    className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation relative z-10"
                                                 >
                                                     <option value="TODO">未着手</option>
                                                     <option value="IN_PROGRESS">進行中</option>

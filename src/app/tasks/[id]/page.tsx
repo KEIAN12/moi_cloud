@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { ArrowLeft, Plus, Check, Clock, User, MessageSquare, Save, X, Send, RefreshCw } from "lucide-react"
+import { ArrowLeft, Plus, Check, Clock, User, MessageSquare, Save, X, Send, RefreshCw, ChevronDown, ChevronUp } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -30,6 +30,7 @@ export default function TaskDetailPage() {
   const [taskAssignee, setTaskAssignee] = useState<string>("")
   const [newCommentText, setNewCommentText] = useState("")
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [isChecklistExpanded, setIsChecklistExpanded] = useState(true)
 
   useEffect(() => {
     // Get current user ID from session
@@ -416,10 +417,28 @@ export default function TaskDetailPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg sm:text-xl text-balance">チェックリスト</CardTitle>
-            <CardDescription className="text-sm sm:text-base text-pretty">作業項目を管理</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg sm:text-xl text-balance">チェックリスト</CardTitle>
+                <CardDescription className="text-sm sm:text-base text-pretty">作業項目を管理</CardDescription>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsChecklistExpanded(!isChecklistExpanded)}
+                className="h-11 w-11 sm:h-10 sm:w-10 touch-manipulation"
+                aria-label={isChecklistExpanded ? "折りたたむ" : "展開する"}
+              >
+                {isChecklistExpanded ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
+            {isChecklistExpanded && (
             <div className="space-y-3">
               {checklistItems.map((item) => {
                 const assignee = users.find((u) => u.id === item.assignee_user_id)
@@ -502,6 +521,12 @@ export default function TaskDetailPage() {
                 </div>
               )}
             </div>
+            )}
+            {!isChecklistExpanded && checklistItems.length > 0 && (
+              <div className="text-center py-4 text-sm text-muted-foreground">
+                {checklistItems.filter(item => !item.is_done).length}件の未完了項目
+              </div>
+            )}
           </CardContent>
         </Card>
 

@@ -161,7 +161,7 @@ CREATE INDEX idx_weeks_week_key ON weeks(week_key);
 -- Insert initial users
 INSERT INTO users (id, name, role, default_language) VALUES
   ('00000000-0000-0000-0000-000000000001', 'Kaori', 'admin', 'ja'),
-  ('00000000-0000-0000-0000-000000000002', 'Mai-chan', 'coadmin', 'ja'),
+  ('00000000-0000-0000-0000-000000000002', 'Mai', 'coadmin', 'ja'),
   ('00000000-0000-0000-0000-000000000003', 'Maxime', 'worker', 'fr');
 
 -- Insert initial glossary terms

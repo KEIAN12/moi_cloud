@@ -258,6 +258,89 @@ export default function DashboardPage() {
         }
     }
 
+    const handleCreateTask = async () => {
+        try {
+            // Get current week_id from week_key
+            const res = await fetch(`/api/weeks?week_key=${currentWeekKey}`)
+            if (!res.ok) {
+                alert("週データの取得に失敗しました")
+                return
+            }
+            
+            const data = await res.json()
+            const week = data.weeks?.[0]
+            
+            if (!week || !week.id) {
+                alert("現在の週データが見つかりません。先に「週を生成」を実行してください。")
+                return
+            }
+
+            // Get task title from user
+            const title = prompt("タスクのタイトルを入力してください:")
+            if (!title || !title.trim()) {
+                return
+            }
+
+            // Calculate due date (default: next business date or 3 days from now)
+            const dueDate = nextBusinessDate || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+            dueDate.setHours(18, 0, 0, 0) // Default to 18:00
+
+            // Create task
+            const createRes = await fetch("/api/tasks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    week_id: week.id,
+                    title_ja: title.trim(),
+                    body_ja: null,
+                    due_at: dueDate.toISOString(),
+                    priority: "MEDIUM",
+                    tag: null,
+                    created_by: "1", // TODO: Get from session
+                }),
+            })
+
+            if (createRes.ok) {
+                const { task } = await createRes.json()
+                alert("タスクを作成しました")
+                loadTasks()
+            } else {
+                const errorData = await createRes.json()
+                alert(`タスクの作成に失敗しました: ${errorData.error || "不明なエラー"}`)
+            }
+        } catch (error) {
+            console.error("Error creating task:", error)
+            alert("タスクの作成中にエラーが発生しました")
+        }
+    }
+
+    // Get assignee color class based on user role
+    const getAssigneeColorClass = (assigneeId: string | null) => {
+        if (!assigneeId) {
+            return "border-l-4 border-l-gray-300"
+        }
+        
+        const assignee = users.find(u => u.id === assigneeId)
+        if (!assignee) {
+            return "border-l-4 border-l-gray-300"
+        }
+
+        // Kaori (admin) - ローズ系
+        if (assignee.role === "admin" || assignee.name.toLowerCase().includes("kaori")) {
+            return "border-l-4 border-l-rose-500"
+        }
+        // Maxime (worker) - エメラルド系
+        if (assignee.role === "worker" || assignee.name.toLowerCase().includes("maxime")) {
+            return "border-l-4 border-l-emerald-500"
+        }
+        // Mai (coadmin) - スカイ系
+        if (assignee.role === "coadmin" || assignee.name.toLowerCase().includes("mai")) {
+            return "border-l-4 border-l-sky-500"
+        }
+
+        return "border-l-4 border-l-gray-300"
+    }
+
     return (
         <div className="space-y-6 sm:space-y-8">
             {/* Header Section */}
@@ -273,7 +356,10 @@ export default function DashboardPage() {
                         <CalendarIcon className="mr-2 h-5 w-5 sm:h-4 sm:w-4" />
                         週を生成
                     </Button>
-                    <Button className="text-base sm:text-sm h-12 sm:h-10 touch-manipulation min-h-[44px]">
+                    <Button 
+                        className="text-base sm:text-sm h-12 sm:h-10 touch-manipulation min-h-[44px]"
+                        onClick={handleCreateTask}
+                    >
                         <Plus className="mr-2 h-5 w-5 sm:h-4 sm:w-4" /> 新規タスク
                     </Button>
                 </div>
@@ -327,7 +413,7 @@ export default function DashboardPage() {
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.15, delay: index * 0.05 }}
-                                className="rounded-lg border p-4 sm:p-5 shadow-sm hover:bg-muted/50 active:bg-muted/70 transition-colors"
+                                className={`rounded-lg border p-4 sm:p-5 shadow-sm hover:bg-muted/50 active:bg-muted/70 transition-colors ${getAssigneeColorClass(task.assignee_user_id)}`}
                                 onClick={() => router.push(`/tasks/${task.id}`)}
                             >
                                 {/* タイトル行 */}
@@ -352,7 +438,11 @@ export default function DashboardPage() {
                                     </Button>
                                 </div>
                                 {/* 期限とプルダウン行 */}
-                                <div className="flex items-center justify-between gap-2 flex-wrap">
+                                <div 
+                                    className="flex items-center justify-between gap-2 flex-wrap"
+                                    onClick={(e) => e.stopPropagation()}
+                                    onTouchStart={(e) => e.stopPropagation()}
+                                >
                                     <span className="text-sm sm:text-base text-muted-foreground text-pretty">
                                         期限: <span className="tabular-nums">{new Date(task.due_at).toLocaleDateString("ja-JP", { year: "numeric", month: "numeric", day: "numeric" })}</span>
                                     </span>
@@ -364,7 +454,9 @@ export default function DashboardPage() {
                                                 handleAssigneeChange(task.id, e.target.value)
                                             }}
                                             onClick={(e) => e.stopPropagation()}
-                                            className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[110px] sm:min-w-[120px] touch-manipulation"
+                                            onTouchStart={(e) => e.stopPropagation()}
+                                            onMouseDown={(e) => e.stopPropagation()}
+                                            className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[110px] sm:min-w-[120px] touch-manipulation relative z-10"
                                         >
                                             <option value="">未割当</option>
                                             {users.map((user) => (
@@ -380,7 +472,9 @@ export default function DashboardPage() {
                                                 handleStatusChange(task.id, e.target.value as TaskStatus)
                                             }}
                                             onClick={(e) => e.stopPropagation()}
-                                            className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation"
+                                            onTouchStart={(e) => e.stopPropagation()}
+                                            onMouseDown={(e) => e.stopPropagation()}
+                                            className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation relative z-10"
                                         >
                                             <option value="TODO">未着手</option>
                                             <option value="IN_PROGRESS">進行中</option>
