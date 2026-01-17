@@ -184,17 +184,17 @@ export default function MyTasksPage() {
                                                     <div
                                                         key={item.id}
                                                         onClick={() => toggleItem(item.id, item.is_done)}
-                                                        className={`flex items-center space-x-3 rounded-md p-2 transition-colors active:bg-accent ${item.is_done ? 'bg-muted/50' : 'hover:bg-muted/30'}`}
+                                                        className={`flex items-center space-x-3 rounded-md p-3 sm:p-2 transition-colors active:bg-accent touch-manipulation min-h-[44px] ${item.is_done ? 'bg-muted/50' : 'hover:bg-muted/30'}`}
                                                     >
                                                         <Checkbox
                                                             id={`item-${item.id}`}
                                                             checked={item.is_done}
                                                             onCheckedChange={() => toggleItem(item.id, item.is_done)}
-                                                            className="h-6 w-6 rounded-full"
+                                                            className="h-7 w-7 sm:h-6 sm:w-6 rounded-full touch-manipulation"
                                                         />
                                                         <label
                                                             htmlFor={`item-${item.id}`}
-                                                            className={`flex-1 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-pretty ${item.is_done ? 'line-through text-muted-foreground' : ''}`}
+                                                            className={`flex-1 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-pretty touch-manipulation ${item.is_done ? 'line-through text-muted-foreground' : ''}`}
                                                         >
                                                             {item.text}
                                                         </label>

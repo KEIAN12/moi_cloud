@@ -83,7 +83,7 @@ export default function DashboardLayout({
                     {/* Header */}
                     <div className="flex h-16 items-center justify-between px-4 sm:px-6 border-b">
                         <span className="text-lg sm:text-xl font-bold tracking-tight text-primary text-balance">moi Cloud</span>
-                        <Button variant="ghost" size="icon" className="md:hidden h-11 w-11 sm:h-10 sm:w-10" onClick={toggleSidebar} aria-label="サイドバーを閉じる">
+                        <Button variant="ghost" size="icon" className="md:hidden h-11 w-11 sm:h-10 sm:w-10 touch-manipulation" onClick={toggleSidebar} aria-label="サイドバーを閉じる">
                             <X className="h-6 w-6 sm:h-5 sm:w-5" />
                         </Button>
                     </div>
@@ -93,9 +93,9 @@ export default function DashboardLayout({
                         {navItems.map((item) => {
                             const isActive = pathname === item.href
                             return (
-                                <Link key={item.href} href={item.href}>
+                                <Link key={item.href} href={item.href} onClick={() => setIsSidebarOpen(false)}>
                                     <div
-                                        className={`flex items-center rounded-lg px-4 py-4 sm:py-3 text-base sm:text-sm font-medium transition-colors active:bg-primary/20 ${isActive
+                                        className={`flex items-center rounded-lg px-4 py-4 sm:py-3 text-base sm:text-sm font-medium transition-colors active:bg-primary/20 touch-manipulation min-h-[44px] ${isActive
                                             ? "bg-primary/10 text-primary"
                                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
                                             }`}
@@ -118,7 +118,7 @@ export default function DashboardLayout({
                                 <p className="truncate text-base sm:text-sm font-medium text-balance">{userName || "Kaori"}</p>
                                 <p className="truncate text-sm sm:text-xs text-muted-foreground text-pretty">{userRole || "店長 (Admin)"}</p>
                             </div>
-                            <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 text-muted-foreground hover:text-destructive flex-shrink-0" onClick={() => router.push('/login')} aria-label="ログアウト">
+                            <Button variant="ghost" size="icon" className="h-11 w-11 sm:h-10 sm:w-10 text-muted-foreground hover:text-destructive flex-shrink-0 touch-manipulation" onClick={() => router.push('/login')} aria-label="ログアウト">
                                 <LogOut className="h-5 w-5 sm:h-4 sm:w-4" />
                             </Button>
                         </div>
@@ -130,7 +130,7 @@ export default function DashboardLayout({
             <div className="flex flex-1 flex-col overflow-hidden">
                 {/* Top Header (Mobile) */}
                 <header className="flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm md:hidden">
-                    <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="メニューを開く" className="h-11 w-11">
+                    <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="メニューを開く" className="h-11 w-11 touch-manipulation">
                         <Menu className="h-6 w-6" />
                     </Button>
                     <span className="font-semibold text-base text-foreground text-balance">moi Cloud</span>

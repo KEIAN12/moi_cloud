@@ -269,11 +269,11 @@ export default function DashboardPage() {
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 sm:space-x-2">
-                    <Button variant="outline" onClick={handleGenerateWeek} className="text-base sm:text-sm h-12 sm:h-10">
+                    <Button variant="outline" onClick={handleGenerateWeek} className="text-base sm:text-sm h-12 sm:h-10 touch-manipulation min-h-[44px]">
                         <CalendarIcon className="mr-2 h-5 w-5 sm:h-4 sm:w-4" />
                         週を生成
                     </Button>
-                    <Button className="text-base sm:text-sm h-12 sm:h-10">
+                    <Button className="text-base sm:text-sm h-12 sm:h-10 touch-manipulation min-h-[44px]">
                         <Plus className="mr-2 h-5 w-5 sm:h-4 sm:w-4" /> 新規タスク
                     </Button>
                 </div>
@@ -293,7 +293,7 @@ export default function DashboardPage() {
                                 variant={viewMode === "all" ? "default" : "ghost"}
                                 size="sm"
                                 onClick={() => setViewMode("all")}
-                                className="h-9 text-sm px-4"
+                                className="h-11 sm:h-9 text-sm px-4 touch-manipulation min-h-[44px]"
                             >
                                 全員
                             </Button>
@@ -301,7 +301,7 @@ export default function DashboardPage() {
                                 variant={viewMode === "my" ? "default" : "ghost"}
                                 size="sm"
                                 onClick={() => setViewMode("my")}
-                                className="h-9 text-sm px-4"
+                                className="h-11 sm:h-9 text-sm px-4 touch-manipulation min-h-[44px]"
                                 disabled={!currentUserId}
                             >
                                 自分のタスク
@@ -315,7 +315,7 @@ export default function DashboardPage() {
                 ) : tasks.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">
                         <p className="text-base sm:text-sm text-pretty mb-4">タスクがありません</p>
-                        <Button onClick={handleGenerateWeek} className="mt-4 h-12 sm:h-10 text-base sm:text-sm">
+                        <Button onClick={handleGenerateWeek} className="mt-4 h-12 sm:h-10 text-base sm:text-sm touch-manipulation min-h-[44px]">
                             <Plus className="mr-2 h-5 w-5 sm:h-4 sm:w-4" /> 週を生成
                         </Button>
                     </div>
@@ -327,12 +327,13 @@ export default function DashboardPage() {
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.15, delay: index * 0.05 }}
-                                className="rounded-lg border p-4 sm:p-5 shadow-sm hover:bg-muted/50"
+                                className="rounded-lg border p-4 sm:p-5 shadow-sm hover:bg-muted/50 active:bg-muted/70 transition-colors"
+                                onClick={() => router.push(`/tasks/${task.id}`)}
                             >
                                 {/* タイトル行 */}
                                 <div className="flex items-center justify-between gap-2 mb-3">
                                     <div className="flex items-center gap-2 flex-1 min-w-0">
-                                        <span className="font-semibold text-base sm:text-lg cursor-pointer truncate" onClick={() => router.push(`/tasks/${task.id}`)} title={task.title_ja}>{task.title_ja}</span>
+                                        <span className="font-semibold text-base sm:text-lg truncate min-h-[44px] flex items-center" title={task.title_ja}>{task.title_ja}</span>
                                         {task.tag && (
                                             <Badge variant="secondary" className="text-xs sm:text-sm whitespace-nowrap flex-shrink-0">{getTagLabel(task.tag)}</Badge>
                                         )}
@@ -345,9 +346,9 @@ export default function DashboardPage() {
                                             router.push(`/tasks/${task.id}`)
                                         }}
                                         aria-label="詳細を表示"
-                                        className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
+                                        className="h-11 w-11 sm:h-10 sm:w-10 flex-shrink-0 touch-manipulation"
                                     >
-                                        <MoreHorizontal className="h-4 w-4 sm:h-5 sm:w-5" />
+                                        <MoreHorizontal className="h-5 w-5 sm:h-5 sm:w-5" />
                                     </Button>
                                 </div>
                                 {/* 期限とプルダウン行 */}
@@ -363,7 +364,7 @@ export default function DashboardPage() {
                                                 handleAssigneeChange(task.id, e.target.value)
                                             }}
                                             onClick={(e) => e.stopPropagation()}
-                                            className="h-9 sm:h-10 px-2 sm:px-3 rounded-md border border-input bg-background text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[100px] sm:min-w-[120px]"
+                                            className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[110px] sm:min-w-[120px] touch-manipulation"
                                         >
                                             <option value="">未割当</option>
                                             {users.map((user) => (
@@ -379,7 +380,7 @@ export default function DashboardPage() {
                                                 handleStatusChange(task.id, e.target.value as TaskStatus)
                                             }}
                                             onClick={(e) => e.stopPropagation()}
-                                            className="h-9 sm:h-10 px-2 sm:px-3 rounded-md border border-input bg-background text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                            className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation"
                                         >
                                             <option value="TODO">未着手</option>
                                             <option value="IN_PROGRESS">進行中</option>

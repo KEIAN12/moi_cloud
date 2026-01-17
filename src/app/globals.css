@@ -129,9 +129,19 @@
 
   html {
     @apply bg-white;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
     @apply bg-white text-foreground antialiased;
+  }
+
+  /* モバイルでのタッチ操作を改善 */
+  button,
+  a,
+  select,
+  input[type="checkbox"],
+  input[type="radio"] {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
   }
 }

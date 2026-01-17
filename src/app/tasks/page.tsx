@@ -132,12 +132,13 @@ export default function TasksPage() {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ duration: 0.15, delay: index * 0.05 }}
-                                        className="rounded-lg border p-4 sm:p-5 shadow-sm hover:bg-muted/50"
+                                        className="rounded-lg border p-4 sm:p-5 shadow-sm hover:bg-muted/50 active:bg-muted/70 transition-colors"
+                                        onClick={() => router.push(`/tasks/${task.id}`)}
                                     >
                                         {/* タイトル行 */}
                                         <div className="flex items-center justify-between gap-2 mb-3">
                                             <div className="flex items-center gap-2 flex-1 min-w-0">
-                                                <span className="font-semibold text-base sm:text-lg cursor-pointer truncate" onClick={() => router.push(`/tasks/${task.id}`)} title={task.title_ja}>{task.title_ja}</span>
+                                                <span className="font-semibold text-base sm:text-lg truncate min-h-[44px] flex items-center" title={task.title_ja}>{task.title_ja}</span>
                                                 {task.tag && (
                                                     <Badge variant="secondary" className="text-xs sm:text-sm whitespace-nowrap flex-shrink-0">{getTagLabel(task.tag)}</Badge>
                                                 )}
@@ -150,9 +151,9 @@ export default function TasksPage() {
                                                     router.push(`/tasks/${task.id}`)
                                                 }}
                                                 aria-label="詳細を表示"
-                                                className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
+                                                className="h-11 w-11 sm:h-10 sm:w-10 flex-shrink-0 touch-manipulation"
                                             >
-                                                <MoreHorizontal className="h-4 w-4 sm:h-5 sm:w-5" />
+                                                <MoreHorizontal className="h-5 w-5 sm:h-5 sm:w-5" />
                                             </Button>
                                         </div>
                                         {/* 期限とプルダウン行 */}
@@ -168,7 +169,7 @@ export default function TasksPage() {
                                                         handleAssigneeChange(task.id, e.target.value)
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="h-9 sm:h-10 px-2 sm:px-3 rounded-md border border-input bg-background text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[100px] sm:min-w-[120px]"
+                                                    className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[110px] sm:min-w-[120px] touch-manipulation"
                                                 >
                                                     <option value="">未割当</option>
                                                     {users.map((user) => (
@@ -184,7 +185,7 @@ export default function TasksPage() {
                                                         handleStatusChange(task.id, e.target.value as TaskStatus)
                                                     }}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="h-9 sm:h-10 px-2 sm:px-3 rounded-md border border-input bg-background text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                    className="h-11 sm:h-10 px-3 sm:px-3 rounded-md border border-input bg-background text-sm sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 touch-manipulation"
                                                 >
                                                     <option value="TODO">未着手</option>
                                                     <option value="IN_PROGRESS">進行中</option>

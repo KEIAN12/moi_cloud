@@ -326,12 +326,12 @@ export default function TaskDetailPage() {
     <div className="min-h-dvh bg-white pb-20">
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between bg-white px-4 shadow-sm">
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard")} aria-label="戻る" className="h-11 w-11 sm:h-10 sm:w-10">
+          <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard")} aria-label="戻る" className="h-11 w-11 sm:h-10 sm:w-10 touch-manipulation">
             <ArrowLeft className="h-6 w-6 sm:h-5 sm:w-5" />
           </Button>
           <h1 className="text-lg sm:text-xl font-bold text-balance">タスク詳細</h1>
         </div>
-        <Button variant="outline" onClick={() => setIsEditing(!isEditing)} className="h-11 sm:h-10 text-base sm:text-sm">
+        <Button variant="outline" onClick={() => setIsEditing(!isEditing)} className="h-11 sm:h-10 text-base sm:text-sm touch-manipulation min-h-[44px]">
           {isEditing ? "キャンセル" : "編集"}
         </Button>
       </header>
@@ -385,6 +385,7 @@ export default function TaskDetailPage() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        className="h-11 sm:h-8 text-xs touch-manipulation min-h-[44px]"
                         onClick={async () => {
                           try {
                             const res = await fetch("/api/translate/retry", {
@@ -400,7 +401,6 @@ export default function TaskDetailPage() {
                             console.error("Error retrying translation:", error)
                           }
                         }}
-                        className="h-8 text-xs"
                       >
                         <RefreshCw className="mr-1 h-3 w-3" />
                         翻訳再実行
@@ -429,14 +429,15 @@ export default function TaskDetailPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.15 }}
-                    className={`flex items-center space-x-3 rounded-md border p-4 sm:p-3 active:bg-muted/50 ${
+                    onClick={() => handleToggleChecklist(item.id, item.is_done)}
+                    className={`flex items-center space-x-3 rounded-md border p-4 sm:p-3 active:bg-muted/50 touch-manipulation min-h-[44px] cursor-pointer ${
                       item.is_done ? "bg-muted/50" : "hover:bg-muted/30"
                     }`}
                   >
                     <Checkbox
                       checked={item.is_done}
                       onCheckedChange={() => handleToggleChecklist(item.id, item.is_done)}
-                      className="h-6 w-6 sm:h-5 sm:w-5"
+                      className="h-7 w-7 sm:h-5 sm:w-5 touch-manipulation"
                     />
                     <div className="flex-1 min-w-0">
                       <p
@@ -482,7 +483,7 @@ export default function TaskDetailPage() {
                   <div className="space-y-2">
                     <Label className="text-base sm:text-sm">担当者</Label>
                     <select
-                      className="w-full rounded-md border border-input bg-background px-3 py-3 sm:py-2 text-base sm:text-sm h-12 sm:h-10"
+                      className="w-full rounded-md border border-input bg-background px-3 py-3 sm:py-2 text-base sm:text-sm h-12 sm:h-10 touch-manipulation"
                       value={selectedAssignee}
                       onChange={(e) => setSelectedAssignee(e.target.value)}
                     >
@@ -494,7 +495,7 @@ export default function TaskDetailPage() {
                       ))}
                     </select>
                   </div>
-                  <Button onClick={handleAddChecklistItem} className="w-full h-12 sm:h-10 text-base sm:text-sm">
+                  <Button onClick={handleAddChecklistItem} className="w-full h-12 sm:h-10 text-base sm:text-sm touch-manipulation min-h-[44px]">
                     <Plus className="mr-2 h-5 w-5 sm:h-4 sm:w-4" />
                     追加
                   </Button>
@@ -553,6 +554,7 @@ export default function TaskDetailPage() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
+                                  className="h-11 sm:h-6 text-xs touch-manipulation min-h-[44px]"
                                   onClick={async () => {
                                     try {
                                       const res = await fetch("/api/translate/retry", {
@@ -568,7 +570,6 @@ export default function TaskDetailPage() {
                                       console.error("Error retrying translation:", error)
                                     }
                                   }}
-                                  className="h-6 text-xs"
                                 >
                                   <RefreshCw className="mr-1 h-3 w-3" />
                                   再翻訳
@@ -602,7 +603,7 @@ export default function TaskDetailPage() {
                     <Button
                       onClick={handleAddComment}
                       disabled={!newCommentText.trim() || !currentUserId}
-                      className="h-12 sm:h-10 text-base sm:text-sm"
+                      className="h-12 sm:h-10 text-base sm:text-sm touch-manipulation min-h-[44px]"
                     >
                       <Send className="h-5 w-5 sm:h-4 sm:w-4" />
                     </Button>
