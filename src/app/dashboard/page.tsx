@@ -76,82 +76,50 @@ export default function DashboardPage() {
 
     const loadTasks = async () => {
         try {
-            // For now, use mock data if API is not available
-            // Use UUID format for mock IDs to avoid database errors
-            const mockTasks: Task[] = [
-                {
-                    id: "00000000-0000-0000-0000-000000000001",
-                    week_id: "00000000-0000-0000-0000-000000000001",
-                    title_ja: "営業告知 (投稿)",
-                    title_fr: null,
-                    body_ja: null,
-                    body_fr: null,
-                    due_at: new Date("2026-01-20T18:00:00").toISOString(),
-                    priority: "HIGH",
-                    status: "TODO",
-                    tag: "投稿",
-                    assignee_user_id: null,
-                    created_by: "00000000-0000-0000-0000-000000000001",
-                    updated_by: null,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                    translated_at: null,
-                    needs_retranslate: false,
-                },
-                {
-                    id: "00000000-0000-0000-0000-000000000002",
-                    week_id: "00000000-0000-0000-0000-000000000001",
-                    title_ja: "取り置き案内 (投稿)",
-                    title_fr: null,
-                    body_ja: null,
-                    body_fr: null,
-                    due_at: new Date("2026-01-23T20:00:00").toISOString(),
-                    priority: "HIGH",
-                    status: "TODO",
-                    tag: "投稿",
-                    assignee_user_id: null,
-                    created_by: "00000000-0000-0000-0000-000000000001",
-                    updated_by: null,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                    translated_at: null,
-                    needs_retranslate: false,
-                },
-                {
-                    id: "00000000-0000-0000-0000-000000000003",
-                    week_id: "00000000-0000-0000-0000-000000000001",
-                    title_ja: "仕込み: 生地作成",
-                    title_fr: null,
-                    body_ja: null,
-                    body_fr: null,
-                    due_at: new Date("2026-01-24T09:00:00").toISOString(),
-                    priority: "MEDIUM",
-                    status: "IN_PROGRESS",
-                    tag: "仕込み",
-                    assignee_user_id: null,
-                    created_by: "00000000-0000-0000-0000-000000000001",
-                    updated_by: null,
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString(),
-                    translated_at: null,
-                    needs_retranslate: false,
-                },
-            ]
-
-            // Try to fetch from API
+            // Get week_id from week_key
+            let weekId: string | null = null
             try {
-                const res = await fetch(`/api/tasks?week_id=1`)
-                if (res.ok) {
-                    const data = await res.json()
-                    setAllTasks(data.tasks || [])
-                } else {
-                    setAllTasks(mockTasks)
+                const weekRes = await fetch(`/api/weeks?week_key=${currentWeekKey}`)
+                if (weekRes.ok) {
+                    const weekData = await weekRes.json()
+                    if (weekData.weeks && weekData.weeks.length > 0) {
+                        weekId = weekData.weeks[0].id
+                    }
                 }
-            } catch {
-                setAllTasks(mockTasks)
+            } catch (error) {
+                console.error("Error fetching week:", error)
+            }
+
+            // If no week found, try to get tasks without week_id filter (all tasks)
+            if (!weekId) {
+                try {
+                    const res = await fetch(`/api/tasks`)
+                    if (res.ok) {
+                        const data = await res.json()
+                        setAllTasks(data.tasks || [])
+                    } else {
+                        setAllTasks([])
+                    }
+                } catch {
+                    setAllTasks([])
+                }
+            } else {
+                // Fetch tasks for the current week
+                try {
+                    const res = await fetch(`/api/tasks?week_id=${weekId}`)
+                    if (res.ok) {
+                        const data = await res.json()
+                        setAllTasks(data.tasks || [])
+                    } else {
+                        setAllTasks([])
+                    }
+                } catch {
+                    setAllTasks([])
+                }
             }
         } catch (error) {
             console.error("Error loading tasks:", error)
+            setAllTasks([])
         } finally {
             setIsLoading(false)
         }
@@ -238,6 +206,8 @@ export default function DashboardPage() {
                 const { task } = await res.json()
                 // Update local state
                 setAllTasks(allTasks.map(t => t.id === taskId ? task : t))
+                // Reload tasks to ensure consistency
+                await loadTasks()
             } else {
                 const errorData = await res.json().catch(() => ({}))
                 console.error("Error updating task status:", errorData.error || "Unknown error")
@@ -271,6 +241,8 @@ export default function DashboardPage() {
                 const { task } = await res.json()
                 // Update local state
                 setAllTasks(allTasks.map(t => t.id === taskId ? task : t))
+                // Reload tasks to ensure consistency
+                await loadTasks()
             } else {
                 const errorData = await res.json().catch(() => ({}))
                 console.error("Error updating task assignee:", errorData.error || "Unknown error")

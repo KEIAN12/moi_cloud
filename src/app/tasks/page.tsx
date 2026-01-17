@@ -29,13 +29,50 @@ export default function TasksPage() {
 
     const loadTasks = async () => {
         try {
-            const res = await fetch(`/api/tasks?week_id=1`)
-            if (res.ok) {
-                const data = await res.json()
-                setTasks(data.tasks || [])
+            // Get week_id from week_key
+            let weekId: string | null = null
+            try {
+                const weekRes = await fetch(`/api/weeks?week_key=${currentWeekKey}`)
+                if (weekRes.ok) {
+                    const weekData = await weekRes.json()
+                    if (weekData.weeks && weekData.weeks.length > 0) {
+                        weekId = weekData.weeks[0].id
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching week:", error)
+            }
+
+            // If no week found, try to get tasks without week_id filter (all tasks)
+            if (!weekId) {
+                try {
+                    const res = await fetch(`/api/tasks`)
+                    if (res.ok) {
+                        const data = await res.json()
+                        setTasks(data.tasks || [])
+                    } else {
+                        setTasks([])
+                    }
+                } catch {
+                    setTasks([])
+                }
+            } else {
+                // Fetch tasks for the current week
+                try {
+                    const res = await fetch(`/api/tasks?week_id=${weekId}`)
+                    if (res.ok) {
+                        const data = await res.json()
+                        setTasks(data.tasks || [])
+                    } else {
+                        setTasks([])
+                    }
+                } catch {
+                    setTasks([])
+                }
             }
         } catch (error) {
             console.error("Error loading tasks:", error)
+            setTasks([])
         } finally {
             setIsLoading(false)
         }
@@ -75,6 +112,8 @@ export default function TasksPage() {
                 const { task } = await res.json()
                 // Update local state
                 setTasks(tasks.map(t => t.id === taskId ? task : t))
+                // Reload tasks to ensure consistency
+                await loadTasks()
             } else {
                 const errorData = await res.json().catch(() => ({}))
                 console.error("Error updating task status:", errorData.error || "Unknown error")
@@ -108,6 +147,8 @@ export default function TasksPage() {
                 const { task } = await res.json()
                 // Update local state
                 setTasks(tasks.map(t => t.id === taskId ? task : t))
+                // Reload tasks to ensure consistency
+                await loadTasks()
             } else {
                 const errorData = await res.json().catch(() => ({}))
                 console.error("Error updating task assignee:", errorData.error || "Unknown error")
