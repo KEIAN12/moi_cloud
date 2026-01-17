@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { Loader2 } from "lucide-react"
 
@@ -58,7 +59,7 @@ export default function LoginForm() {
                 <Card className="w-full max-w-md shadow-lg">
                     <CardHeader className="space-y-1 text-center">
                         <div className="flex justify-center pb-2">
-                            <img src="/logo.svg" alt="moi" className="h-16 w-auto" />
+                            <Image src="/logo.svg" alt="moi" width={64} height={64} className="h-16 w-auto" priority />
                         </div>
                         <CardTitle className="text-2xl sm:text-3xl font-bold tracking-tight text-primary text-balance">moi Task</CardTitle>
                         <CardDescription className="text-base sm:text-sm text-pretty">

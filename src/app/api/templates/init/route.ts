@@ -230,7 +230,16 @@ export async function POST() {
     // Get users to resolve role-based assignees
     const { data: users } = await supabase.from('users').select('id, role')
 
-    const createdTasks: any[] = []
+    interface CreatedTask {
+      id: string
+      template_id: string
+      title_ja: string
+      body_ja: string | null
+      relative_due_rule: string
+      tag: string | null
+      sort_order: number
+    }
+    const createdTasks: CreatedTask[] = []
 
     for (const taskData of templateTasks) {
       const { data: templateTask, error: taskError } = await supabase

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase/client'
-import { translateJaToFr, translateFrToJa } from '@/lib/gemini/translator'
+import { translateJaToFr } from '@/lib/gemini/translator'
 import { logEvent } from '@/lib/events/logger'
 
 // POST /api/translate/retry - Retry translation for a task, checklist item, or comment

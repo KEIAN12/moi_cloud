@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase/client'
 
 // GET /api/analytics/dashboard - Get analytics data for dashboard
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const now = new Date()
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
     // 1. Overdue tasks
-    const { data: overdueTasks, error: overdueError } = await supabase
+    const { data: overdueTasks } = await supabase
       .from('tasks')
       .select('id, title_ja, due_at, status, tag')
       .lt('due_at', now.toISOString())
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       .order('due_at', { ascending: true })
 
     // 2. Overdue checklist items
-    const { data: overdueChecklist, error: checklistError } = await supabase
+    const { data: overdueChecklist } = await supabase
       .from('checklist_items')
       .select('id, text_ja, due_at, is_done, task_id, tasks(title_ja)')
       .lt('due_at', now.toISOString())
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       .order('due_at', { ascending: true })
 
     // 3. Frequently missed posts (tasks with tag "Promotion" that are often overdue)
-    const { data: promotionTasks, error: promotionError } = await supabase
+    const { data: promotionTasks } = await supabase
       .from('tasks')
       .select('id, title_ja, due_at, status, tag')
       .eq('tag', 'Promotion')
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       .in('status', ['TODO', 'IN_PROGRESS'])
 
     // 4. Unused checklist items (always unchecked)
-    const { data: allChecklistItems, error: allChecklistError } = await supabase
+    const { data: allChecklistItems } = await supabase
       .from('checklist_items')
       .select('id, text_ja, is_done, task_id, tasks(title_ja)')
       .order('created_at', { ascending: false })

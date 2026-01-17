@@ -21,7 +21,7 @@ export type EventType =
   | 'notification_opened'
 
 export interface EventPayload {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 /**

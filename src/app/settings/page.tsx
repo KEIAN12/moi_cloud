@@ -18,6 +18,18 @@ interface GlossaryTerm {
     note: string | null
 }
 
+interface Recommendation {
+    id: string
+    type: string
+    payload_json: {
+        title?: string
+        description?: string
+        action?: string
+    }
+    status: 'proposed' | 'approved' | 'rejected'
+    created_at: string
+}
+
 export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState<"glossary" | "templates" | "users" | "recommendations">("glossary")
     const [glossaryTerms, setGlossaryTerms] = useState<GlossaryTerm[]>([])
@@ -29,7 +41,7 @@ export default function SettingsPage() {
     const [editJaTerm, setEditJaTerm] = useState("")
     const [editFrTerm, setEditFrTerm] = useState("")
     const [editNote, setEditNote] = useState("")
-    const [recommendations, setRecommendations] = useState<any[]>([])
+    const [recommendations, setRecommendations] = useState<Recommendation[]>([])
     const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false)
 
     useEffect(() => {

@@ -36,20 +36,6 @@ export function BusinessCalendar({ businessDates }: BusinessCalendarProps) {
     return map
   }, [businessDates])
 
-  // Get next business date
-  const nextBusinessDate = useMemo(() => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
-    for (const week of businessDates) {
-      const date = getBusinessDate(week)
-      if (date >= today) {
-        return date
-      }
-    }
-    return null
-  }, [businessDates])
-
   // Calendar logic
   const year = currentMonth.getFullYear()
   const month = currentMonth.getMonth()
@@ -170,7 +156,6 @@ export function BusinessCalendar({ businessDates }: BusinessCalendarProps) {
             }
 
             const dateKey = date.toISOString().split('T')[0]
-            const businessDate = businessDatesMap.get(dateKey)
             const isBusiness = isBusinessDate(date)
             const isTodayDate = isToday(date)
             const isPastDate = isPast(date)

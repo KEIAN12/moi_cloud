@@ -10,10 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import type { Task, User as UserType } from "@/lib/supabase/types"
 import { getWeekKey } from "@/lib/utils/week"
-import { getStatusLabel, getTagLabel } from "@/lib/utils/status"
+import { getTagLabel } from "@/lib/utils/status"
 import type { TaskStatus } from "@/lib/supabase/types"
 import { BusinessCalendar } from "@/components/calendar/business-calendar"
-import { User } from "lucide-react"
 
 interface BusinessDate {
   week_key: string
@@ -26,7 +25,7 @@ export default function DashboardPage() {
     const [tasks, setTasks] = useState<Task[]>([])
     const [allTasks, setAllTasks] = useState<Task[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const [currentWeekKey, setCurrentWeekKey] = useState(getWeekKey())
+    const [currentWeekKey] = useState(getWeekKey())
     const [businessDates, setBusinessDates] = useState<BusinessDate[]>([])
     const [nextBusinessDate, setNextBusinessDate] = useState<Date | null>(null)
     const [users, setUsers] = useState<UserType[]>([])
@@ -42,6 +41,7 @@ export default function DashboardPage() {
         loadTasks()
         loadBusinessDates()
         loadUsers()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentWeekKey])
 
     useEffect(() => {
@@ -297,7 +297,7 @@ export default function DashboardPage() {
             })
 
             if (createRes.ok) {
-                const { task } = await createRes.json()
+                await createRes.json()
                 alert("タスクを作成しました")
                 loadTasks()
             } else {

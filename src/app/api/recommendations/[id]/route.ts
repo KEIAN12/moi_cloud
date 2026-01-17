@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase/client'
-import { parseRelativeDueRule } from '@/lib/utils/week'
 
 // PATCH /api/recommendations/[id] - Approve or reject a recommendation
 export async function PATCH(
@@ -55,7 +54,18 @@ export async function PATCH(
   }
 }
 
-async function applyRecommendation(recommendation: any) {
+interface RecommendationPayload {
+  checklist_text?: string
+  task_title?: string
+  avg_delay_hours?: number
+}
+
+interface RecommendationRecord {
+  type: string
+  payload_json: RecommendationPayload
+}
+
+async function applyRecommendation(recommendation: RecommendationRecord) {
   const { type, payload_json } = recommendation
 
   try {

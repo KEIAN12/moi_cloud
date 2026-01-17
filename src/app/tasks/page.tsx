@@ -3,14 +3,13 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Plus, MoreHorizontal, Calendar as CalendarIcon } from "lucide-react"
+import { Plus, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { User } from "lucide-react"
 import type { Task, User as UserType } from "@/lib/supabase/types"
-import { getStatusLabel, getTagLabel } from "@/lib/utils/status"
+import { getTagLabel } from "@/lib/utils/status"
 import type { TaskStatus } from "@/lib/supabase/types"
 import { getWeekKey } from "@/lib/utils/week"
 import DashboardLayout from "@/components/layout/dashboard-layout"
@@ -19,12 +18,13 @@ export default function TasksPage() {
     const router = useRouter()
     const [tasks, setTasks] = useState<Task[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const [currentWeekKey, setCurrentWeekKey] = useState(getWeekKey())
+    const [currentWeekKey] = useState(getWeekKey())
     const [users, setUsers] = useState<UserType[]>([])
 
     useEffect(() => {
         loadTasks()
         loadUsers()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentWeekKey])
 
     const loadTasks = async () => {

@@ -140,7 +140,7 @@ export default function MyTasksPage() {
                 )}
 
                 <div className="flex flex-col space-y-2">
-                    <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider text-balance">Aujourd'hui</h2>
+                    <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider text-balance">Aujourd&apos;hui</h2>
                 </div>
 
                 {isLoading ? (

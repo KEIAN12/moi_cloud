@@ -1,13 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase/client'
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { getEventLogs } from '@/lib/events/logger'
 
 const apiKey = process.env.GEMINI_API_KEY || ''
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null
 
 // POST /api/recommendations/generate - Generate recommendations from event logs
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const now = new Date()
     const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000)
@@ -86,7 +85,7 @@ export async function POST(request: NextRequest) {
       .eq('role', 'worker')
       .single()
 
-    let maximeEfficiencyRecommendations: Array<{ text: string; taskTitle: string }> = []
+    const maximeEfficiencyRecommendations: Array<{ text: string; taskTitle: string }> = []
     if (maximeUser) {
       // マキシムが担当したチェック項目の完了時間を分析
       const { data: maximeCompletedItems } = await supabase
@@ -121,9 +120,9 @@ export async function POST(request: NextRequest) {
 
             if (maximeDelay < otherAvgDelay - 2) { // 2時間以上早い
               // tasksは配列として返される可能性があるため、最初の要素を取得
-              const taskTitle = Array.isArray(item.tasks) 
+              const taskTitle = Array.isArray(item.tasks)
                 ? (item.tasks[0]?.title_ja || '')
-                : (item.tasks as any)?.title_ja || ''
+                : (item.tasks as { title_ja?: string } | null)?.title_ja || ''
               
               maximeEfficiencyRecommendations.push({
                 text: item.text_ja,
@@ -138,7 +137,7 @@ export async function POST(request: NextRequest) {
     // 4. Gemini APIで提案を生成
     const recommendations: Array<{
       type: string
-      payload_json: Record<string, any>
+      payload_json: Record<string, unknown>
       status: 'proposed'
     }> = []
 
@@ -287,8 +286,8 @@ ${maximeEfficiencyRecommendations.map(rec => `- "${rec.text}" (タスク: ${rec.
     const newRecommendations = recommendations.filter(rec => {
       if (!existingRecommendations) return true
       return !existingRecommendations.some(existing => {
-        const existingPayload = existing.payload_json as any
-        const newPayload = rec.payload_json
+        const existingPayload = existing.payload_json as Record<string, unknown> | null
+        const newPayload = rec.payload_json as Record<string, unknown>
         return existingPayload?.title === newPayload?.title && existingPayload?.action === newPayload?.action
       })
     })

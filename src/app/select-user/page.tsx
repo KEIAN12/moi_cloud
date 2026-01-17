@@ -1,10 +1,10 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { User, ShieldCheck, ChefHat } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const USERS = [
@@ -32,7 +32,7 @@ export default function SelectUserPage() {
                 <Card className="shadow-xl border-0 bg-white/95 backdrop-blur">
                     <CardHeader className="text-center space-y-4 px-4 sm:px-6 pt-6">
                         <div className="flex justify-center pb-2">
-                            <img src="/logo.svg" alt="moi" className="h-16 sm:h-20 w-auto" />
+                            <Image src="/logo.svg" alt="moi" width={80} height={80} className="h-16 sm:h-20 w-auto" priority />
                         </div>
                         <CardTitle className="text-xl sm:text-2xl font-bold text-balance">担当者を選択</CardTitle>
                         <CardDescription className="text-sm sm:text-base text-pretty">

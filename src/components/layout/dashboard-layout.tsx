@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -13,12 +13,25 @@ import {
     Menu,
     X,
     User,
-    Bell,
     BarChart3
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { NotificationBell } from "@/components/notifications/notification-bell"
+
+function getInitialUserInfo(): { name: string; role: string } {
+    if (typeof window === "undefined") {
+        return { name: "Kaori", role: "店長 (Admin)" }
+    }
+    const name = sessionStorage.getItem("userName") || "Kaori"
+    const userId = sessionStorage.getItem("userId") || "kaori"
+    const roleMap: Record<string, string> = {
+        "kaori": "店長 (Admin)",
+        "mai": "共同管理者",
+        "maxime": "スタッフ",
+    }
+    return { name, role: roleMap[userId] || "店長 (Admin)" }
+}
 
 export default function DashboardLayout({
     children,
@@ -28,26 +41,9 @@ export default function DashboardLayout({
     const pathname = usePathname()
     const router = useRouter()
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-    const [userName, setUserName] = useState<string>("")
-    const [userRole, setUserRole] = useState<string>("")
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const name = sessionStorage.getItem("userName") || "Kaori"
-            const userId = sessionStorage.getItem("userId") || "kaori"
-            
-            // ロールを決定
-            const roleMap: Record<string, string> = {
-                "kaori": "店長 (Admin)",
-                "mai": "共同管理者",
-                "maxime": "スタッフ",
-            }
-            
-            setUserName(name)
-            setUserRole(roleMap[userId] || "店長 (Admin)")
-        }
-    }, [])
+    const userInfo = getInitialUserInfo()
+    const userName = userInfo.name
+    const userRole = userInfo.role
 
     const navItems = [
         { href: "/dashboard", label: "ダッシュボード", icon: LayoutDashboard },

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase/client'
-import { translateJaToFr, translateFrToJa } from '@/lib/gemini/translator'
+import { translateJaToFr } from '@/lib/gemini/translator'
 import { logEvent } from '@/lib/events/logger'
-import type { Task, ChecklistItem } from '@/lib/supabase/types'
 
 // GET /api/tasks - Get tasks with filters
 export async function GET(request: NextRequest) {

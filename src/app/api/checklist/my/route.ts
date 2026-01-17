@@ -31,8 +31,30 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    interface TaskInfo {
+      id: string
+      title_ja: string
+      title_fr: string | null
+      due_at: string
+    }
+
+    interface ChecklistItemWithTask {
+      id: string
+      task_id: string
+      text_ja: string
+      text_fr: string | null
+      is_done: boolean
+      due_at: string | null
+      task: TaskInfo
+    }
+
+    interface GroupedTask {
+      task: TaskInfo
+      items: ChecklistItemWithTask[]
+    }
+
     // Group by task
-    const grouped = (items || []).reduce((acc: any, item: any) => {
+    const grouped = (items || []).reduce((acc: Record<string, GroupedTask>, item: ChecklistItemWithTask) => {
       const taskId = item.task_id
       if (!acc[taskId]) {
         acc[taskId] = {
@@ -44,11 +66,11 @@ export async function GET(request: NextRequest) {
       return acc
     }, {})
 
-    const result = Object.values(grouped).map((group: any) => ({
+    const result = (Object.values(grouped) as GroupedTask[]).map((group) => ({
       task_id: group.task.id,
       task_title: group.task.title_fr || group.task.title_ja,
       due_at: group.task.due_at,
-      items: group.items.map((item: any) => ({
+      items: group.items.map((item) => ({
         id: item.id,
         text: item.text_fr || item.text_ja,
         is_done: item.is_done,

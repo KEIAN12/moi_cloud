@@ -36,7 +36,7 @@ export async function POST(
   try {
     const { id } = await params
     const body = await request.json()
-    const { body_ja, body_fr, author_user_id, detected_language } = body
+    const { body_ja, body_fr, author_user_id } = body
 
     if (!author_user_id) {
       return NextResponse.json({ error: 'Missing author_user_id' }, { status: 400 })

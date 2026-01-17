@@ -15,28 +15,23 @@ interface Notification {
   read: boolean
 }
 
+function getInitialUserId(): string | null {
+  if (typeof window === "undefined") return null
+  const userId = sessionStorage.getItem("userId")
+  if (!userId) return null
+  const userIdMap: Record<string, string> = {
+    "kaori": "00000000-0000-0000-0000-000000000001",
+    "mai": "00000000-0000-0000-0000-000000000002",
+    "maxime": "00000000-0000-0000-0000-000000000003",
+  }
+  return userIdMap[userId] || userId
+}
+
 export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-
-  useEffect(() => {
-    // Get current user ID from session
-    if (typeof window !== "undefined") {
-      const userId = sessionStorage.getItem("userId")
-      if (userId) {
-        // Map to database user ID
-        // This is a simplified version - in production, you'd want a proper mapping
-        const userIdMap: Record<string, string> = {
-          "kaori": "00000000-0000-0000-0000-000000000001",
-          "mai": "00000000-0000-0000-0000-000000000002",
-          "maxime": "00000000-0000-0000-0000-000000000003",
-        }
-        setCurrentUserId(userIdMap[userId] || userId)
-      }
-    }
-  }, [])
+  const currentUserId = getInitialUserId()
 
   useEffect(() => {
     if (!currentUserId) return

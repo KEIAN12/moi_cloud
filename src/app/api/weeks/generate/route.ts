@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase/client'
 import { translateJaToFr } from '@/lib/gemini/translator'
 import { logEvent } from '@/lib/events/logger'
-import { getWeekKey, getDefaultBusinessDay, parseRelativeDueRule, getNextWeekKey } from '@/lib/utils/week'
+import { getDefaultBusinessDay, parseRelativeDueRule } from '@/lib/utils/week'
 
 // POST /api/weeks/generate - Generate tasks from template for a week
 export async function POST(request: NextRequest) {
@@ -92,7 +92,15 @@ export async function POST(request: NextRequest) {
 
     const existingTitles = new Set(existingTasks?.map((t) => t.title_ja) || [])
 
-    const createdTasks: any[] = []
+    interface CreatedTask {
+      id: string
+      week_id: string
+      title_ja: string
+      title_fr: string | null
+      due_at: string
+      status: string
+    }
+    const createdTasks: CreatedTask[] = []
 
     // Create tasks from template
     for (const templateTask of templateTasks) {

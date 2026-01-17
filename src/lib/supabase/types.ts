@@ -120,14 +120,14 @@ export interface EventLog {
   user_id: string | null
   task_id: string | null
   checklist_item_id: string | null
-  payload_json: Record<string, any>
+  payload_json: Record<string, unknown>
   created_at: string
 }
 
 export interface Recommendation {
   id: string
   type: string
-  payload_json: Record<string, any>
+  payload_json: Record<string, unknown>
   status: 'proposed' | 'approved' | 'rejected'
   created_at: string
   decided_by: string | null

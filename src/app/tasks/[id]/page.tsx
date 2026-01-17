@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { ArrowLeft, Plus, Check, Clock, User, MessageSquare, Save, X, Send, RefreshCw, ChevronDown, ChevronUp } from "lucide-react"
+import { ArrowLeft, Plus, Clock, User, MessageSquare, Send, RefreshCw, ChevronDown, ChevronUp } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -62,6 +62,7 @@ export default function TaskDetailPage() {
     }
     loadTask()
     loadUsers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskId])
 
   const loadTask = async () => {

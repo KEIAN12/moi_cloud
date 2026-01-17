@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         }
 
         let message = ''
-        let type: 'info' | 'warning' | 'success' = 'info'
+        const type: 'info' | 'warning' | 'success' = 'info'
         let link = ''
 
         switch (event.event_type) {
@@ -94,9 +94,8 @@ export async function GET(request: NextRequest) {
 // POST /api/notifications - Mark notification as read
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { notification_id } = body
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _body = await request.json()
     // MVP: We don't have a notifications table yet, so we'll just return success
     // In the future, we'd update a notifications table here
     return NextResponse.json({ success: true })
