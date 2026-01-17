@@ -127,6 +127,15 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params
+    
+    // Check if it's a mock task ID (starts with all zeros)
+    if (id.startsWith("00000000-0000-0000-0000-")) {
+      return NextResponse.json(
+        { error: 'Cannot update mock task. Please generate tasks from template first.' },
+        { status: 400 }
+      )
+    }
+    
     const body = await request.json()
     const { updated_by, ...updates } = body
 

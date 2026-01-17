@@ -218,6 +218,13 @@ export default function DashboardPage() {
 
     const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
         try {
+            // Check if it's a mock task ID
+            if (taskId.startsWith("00000000-0000-0000-0000-")) {
+                // For mock tasks, just update local state
+                setAllTasks(allTasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t))
+                return
+            }
+
             const res = await fetch(`/api/tasks/${taskId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -231,14 +238,26 @@ export default function DashboardPage() {
                 const { task } = await res.json()
                 // Update local state
                 setAllTasks(allTasks.map(t => t.id === taskId ? task : t))
+            } else {
+                const errorData = await res.json().catch(() => ({}))
+                console.error("Error updating task status:", errorData.error || "Unknown error")
+                alert(`ステータスの更新に失敗しました: ${errorData.error || "不明なエラー"}`)
             }
         } catch (error) {
             console.error("Error updating task status:", error)
+            alert("ステータスの更新中にエラーが発生しました")
         }
     }
 
     const handleAssigneeChange = async (taskId: string, assigneeId: string) => {
         try {
+            // Check if it's a mock task ID
+            if (taskId.startsWith("00000000-0000-0000-0000-")) {
+                // For mock tasks, just update local state
+                setAllTasks(allTasks.map(t => t.id === taskId ? { ...t, assignee_user_id: assigneeId || null } : t))
+                return
+            }
+
             const res = await fetch(`/api/tasks/${taskId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -252,9 +271,14 @@ export default function DashboardPage() {
                 const { task } = await res.json()
                 // Update local state
                 setAllTasks(allTasks.map(t => t.id === taskId ? task : t))
+            } else {
+                const errorData = await res.json().catch(() => ({}))
+                console.error("Error updating task assignee:", errorData.error || "Unknown error")
+                alert(`担当者の更新に失敗しました: ${errorData.error || "不明なエラー"}`)
             }
         } catch (error) {
             console.error("Error updating task assignee:", error)
+            alert("担当者の更新中にエラーが発生しました")
         }
     }
 
